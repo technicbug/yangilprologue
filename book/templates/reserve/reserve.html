@@ -1,0 +1,45 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>약품 사용 예약</title>
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+</head>
+<body>
+    {% include 'root/header.html' %}
+
+    <div class="container mt-5">
+        <h1 class="text-center">약품 사용 예약</h1>
+        <form method="post" class="reservation-form mt-4">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="chemical_name">약품명</label>
+                <select name="chemical_name" id="chemical_name" class="form-control">
+                    {% for chemical in chemicals %}
+                        <option value="{{ chemical.id }}">{{ chemical.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="quantity">사용량</label>
+                <input type="number" name="quantity" id="quantity" class="form-control" placeholder="사용량을 입력하세요" min="1" required>
+            </div>
+            <div class="form-group">
+                <label for="reservation_date">사용 예정일</label>
+                <input type="date" name="reservation_date" id="reservation_date" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="comments">비고</label>
+                <textarea name="comments" id="comments" rows="3" class="form-control" placeholder="추가적인 요청 사항을 입력하세요"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">예약하기</button>
+        </form>
+    </div>
+
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,140 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>약품 관리</title>
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <link href='{% static "css/templatemo-xtra-blog.css" %}' rel="stylesheet">
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/script.js' %}"></script>
+</head>
+<body>
+    {% include 'root/header.html' %}
+    <div class="container-fluid" style="margin-top: 80px;">
+        <main class="tm-main">
+            <h2>약품 관리</h2>
+            <h4>약품 관리는 신중하게 해주세요</h4>
+
+            <div class="mt-4">
+                <!-- 약품 추가 폼 -->
+                <form method="post" action="{% url 'manage_chemicals' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-row">
+                        {{ form.as_p }}
+                    </div>
+                    <button type="submit" class="btn btn-success">약품 추가</button>
+                </form>
+            </div>
+            
+            <hr>
+
+            <!-- 약품 목록 -->
+            <table class="detail-table table-striped">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>약품명</th>
+                        <th>잔여용량</th>
+                        <th>태그</th>
+                        <th>이미지</th>
+                        <th>수정</th>
+                        <th>삭제</th>
+                        <th>예약 취소</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for book in books %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ book.name }}</td>
+                        <td>{{ book.remain }}</td>
+                        <td>{{ book.tags }}</td>
+                        <td>
+                            {% if book.img %}
+                                <img src="{{ book.img.url }}" alt="이미지" style="width: 100px;">
+                            {% else %}
+                                <p>이미지가 없습니다.</p>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <button class="btn btn-warning btn-sm" onclick="showEditForm('{{ book.id }}')">수정</button>
+                            <div id="edit-form-{{ book.id }}" style="display: none;">
+                                <form method="post" action="{% url 'update_chemical' book.id %}" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <input type="text" name="name" value="{{ book.name }}" class="form-control" placeholder="약품명">
+                                    <input type="number" name="remain" value="{{ book.remain }}" class="form-control" placeholder="잔여용량">
+                                    <input type="text" name="tags" value="{{ book.tags }}" class="form-control" placeholder="태그">
+                                    <textarea name="content" class="form-control" placeholder="설명">{{ book.content }}</textarea>
+                                    <label for="img">이미지 수정</label>
+                                    <input type="file" name="img" class="form-control">
+                                    <button type="submit" class="btn btn-primary mt-2">저장</button>
+                                    <button type="button" class="btn btn-secondary mt-2" onclick="hideEditForm('{{ book.id }}')">취소</button>
+                                </form>
+                            </div>
+                        </td>
+                        <td>
+                            <form method="POST" action="{% url 'delete_chemical' book.id %}" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('해당 약품을 삭제하시겠습니까?');">
+                                    삭제
+                                </button>
+                            </form>
+                        </td>
+                        <td>
+                            <form method="POST" action="{% url 'cancel_reservation' book.id %}" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-secondary btn-sm" onclick="return confirm('모든 예약을 취소하시겠습니까?');">
+                                    예약 취소
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </main>
+    </div>
+
+    <script>
+        function showEditForm(id) {
+            document.getElementById(`edit-form-${id}`).style.display = 'block';
+        }
+
+        function hideEditForm(id) {
+            document.getElementById(`edit-form-${id}`).style.display = 'none';
+        }
+
+        function deleteChemical(id) {
+            if (confirm("정말로 삭제하시겠습니까?")) {
+                $.ajax({
+                    url: `/delete/${id}/`,
+                    method: 'POST',
+                    data: { csrfmiddlewaretoken: '{{ csrf_token }}' },
+                    success: function (response) {
+                        alert(response.message);
+                        location.reload();
+                    }
+                });
+            }
+        }
+
+        function cancelReservations(id) {
+            if (confirm("모든 예약을 취소하시겠습니까?")) {
+                $.ajax({
+                    url: `/cancel/${id}/`,
+                    method: 'POST',
+                    data: { csrfmiddlewaretoken: '{{ csrf_token }}' },
+                    success: function (response) {
+                        alert(response.message);
+                        location.reload();
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+</html>

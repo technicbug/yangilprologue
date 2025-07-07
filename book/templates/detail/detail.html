@@ -1,0 +1,155 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>약품 상세 정보</title>
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <link href='{% static "css/templatemo-xtra-blog.css" %}' rel="stylesheet">
+</head>
+<body>
+    {% include 'root/header.html' %}
+
+    <div class="container-fluid">
+        <main class="tm-main">
+            <div class="chemical-detail">
+                <div class="row">
+                    <!-- 이미지 섹션 -->
+                    {% if book.img %}
+                        <div class="chemical-image-container">
+                            <img src="{{ book.img.url }}" alt="약품 이미지" class="img-fluid img-thumbnail">
+                        </div>
+                    {% else %}
+                        <div class="chemical-image-container">
+                            <img src="{% static 'img/chemical.png' %}" alt="약품 이미지" class="img-fluid img-thumbnail">
+                        </div>
+                    {% endif %}
+
+                    <!-- 정보 섹션 -->
+                    <div class="chemical-info">
+                        <h2>{{ book.name }}</h2>
+                        <p><strong>잔여 용량:</strong> {{ book.remain }}</p>
+                        <p><strong>예약된 용량:</strong> {{ book.reserved }}</p>
+                        {% if book.recent_use %}
+                            <p><strong>최근 사용:</strong> {{ book.recent_use }}</p>
+                        {% else %}
+                            <p><strong>최근 사용:</strong> 기록 없음</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>    
+
+                <!-- 설명 및 태그 섹션 -->
+            <div class="mt-4">
+                <h3>태그</h3>
+                <p>{{ book.tags|default:"태그 없음" }}</p>
+
+                <h3>설명</h3>
+                <p>{{ book.description|default:"등록된 설명 없음" }}</p>
+            </div>
+
+                <!-- 예약 내역 -->
+                <div class="chemical-table">
+                    <h3>예약 내역</h3>
+                    <table class="table table-striped detail-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>예약자</th>
+                                <th>예약량</th>
+                                <th>예약일</th>
+                                <th>비고</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for reservation in book.reservation_list %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ reservation.name }}</td>
+                                <td>{{ reservation.quantity }}</td>
+                                <td>{{ reservation.reservation_date }}</td>
+                                <td>{{ reservation.comments }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5">예약 내역이 없습니다.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="chemical-table">
+                    <h3>사용 내역</h3>
+                    <table class="table table-striped detail-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>사용자</th>
+                                <th>사용량</th>
+                                <th>사용일(예정일)</th>
+                                <th>비고</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for usage in book.usage_history %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ usage.name }}</td>
+                                <td>{{ usage.quantity }}</td>
+                                <td>{{ usage.reservation_date }}</td>
+                                <td>{{ usage.comments }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5">사용 내역이 없습니다.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <h1></h1>
+                <h3>예약하기</h3>
+                <form method="post" action="{% url 'reservation_view' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="chemical_name" value="{{ book.id }}">
+                    <div class="form-group">
+                        <label for="reserver_name">학번 이름</label>
+                        <input type="text" name="reserver_name" class="form-control" placeholder="ex: 20120 홍길동" required>
+                    </div>
+                    {% if max_reservable > 0 %}
+                    <div class="form-group">
+                        <label for="quantity">예약량</label>
+                        <input type="number" 
+                            name="quantity" 
+                            class="form-control" 
+                            placeholder="예약량" 
+                            min="1" 
+                            max="{{ max_reservable }}" 
+                            step="1"
+                            required>
+                    </div>
+                    {% else %}
+                        <p class="text-danger">현재 예약 가능한 잔여량이 없습니다.</p>
+                    {% endif %}
+                    
+                    <div class="form-group">
+                        <label for="reservation_date">사용 예정일</label>
+                        <input type="date" name="reservation_date" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="comments">비고</label>
+                        <textarea name="comments" class="form-control" placeholder="비고"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">제출</button>
+                </form>
+                
+        </main>
+    </div>
+
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,80 @@
+{% load static %}
+
+<header class="tm-header" id="tm-header" style="background-color: #283e55;">
+    <div class="tm-header-wrapper">
+        <button class="navbar-toggler" type="button" aria-label="Toggle navigation">
+            <img src="{% static 'img/menu.png' %}" alt="Menu Icon" style="width: 24px; height: 24px;">
+        </button>
+        
+        <div class="tm-site-header">
+            <h1 class="text-center">프롤로그 화학</h1>
+        </div>
+        <nav class="tm-nav" id="tm-nav">            
+            <ul>
+                {% if request.path == '/book/chemicals/' %}
+                    <li class="tm-nav-item active"><a href="{% url 'chemical_list' %}" class="tm-nav-link">
+                        <i class="fas fa-list"></i>
+                        약품 목록
+                    </a></li>
+                {% else %}
+                    <li class="tm-nav-item"><a href="{% url 'chemical_list' %}" class="tm-nav-link">
+                        <i class="fas fa-list"></i>
+                        약품 목록
+                    </a></li>
+                {% endif %}
+                {% if request.path == '/book/wastewater/' %}
+                    <li class="tm-nav-item active"><a href="{% url 'wastewater_page' %}" class="tm-nav-link">
+                        <i class="fas fa-plus"></i>
+                        폐수 기록
+                    </a></li>
+                {% else %}
+                    <li class="tm-nav-item"><a href="{% url 'wastewater_page' %}" class="tm-nav-link">
+                        <i class="fas fa-plus"></i>
+                        폐수 기록
+                    </a></li>
+                {% endif %}
+                {% if request.path == '/book/molcalc/' %}
+                    <li class="tm-nav-item active"><a href="{% url 'mol_calc' %}" class="tm-nav-link">
+                        <i class="fas fa-clipboard"></i>
+                        몰농도 계산기
+                    </a></li>
+                {% else %}
+                    <li class="tm-nav-item"><a href="{% url 'mol_calc' %}" class="tm-nav-link">
+                        <i class="fas fa-clipboard"></i>
+                        몰농도 계산기
+                    </a></li>
+                {% endif %}
+                
+                {% with request.path|slice:":13" as path %}
+                    {% if path == '/book/manage/' %}
+                        <li class="tm-nav-item active"><a href="{% url 'manage_chemicals' %}" class="tm-nav-link">
+                            <i class="fas fa-cog"></i>
+                            약품관리
+                        </a></li>
+                    {% else %}
+                        <li class="tm-nav-item"><a href="{% url 'manage_chemicals' %}" class="tm-nav-link">
+                            <i class="fas fa-cog"></i>
+                            약품관리
+                        </a></li>
+                    {% endif %} 
+                {% endwith %} 
+
+                
+            </ul>
+        </nav>
+    </div>
+
+
+</header>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggler = document.querySelector('.navbar-toggler'); // 토글 버튼
+        const nav = document.querySelector('.tm-nav'); // 메뉴
+
+        if (toggler && nav) {
+            toggler.addEventListener('click', function () {
+                nav.classList.toggle('show'); // 'show' 클래스 토글
+            });
+        }
+    });
+</script>

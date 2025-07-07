@@ -1,0 +1,126 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>몰농도 계산기</title>
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <link href='{% static "css/templatemo-xtra-blog.css" %}' rel="stylesheet">
+</head>
+<body>
+    {% include 'root/header.html' %}
+
+    <div class="container-fluid">
+        <main class="tm-main">
+            <h2>몰농도 계산기</h2>
+            <h6>필요한 용질의 양을 미리 손으로 계산해보고 확인용으로 사용해주세요</h6>
+
+
+            <form id="mol-form">
+
+                <!-- 농도 단위 -->
+                <div class="form-group">
+                    <label for="concentrationType">농도 단위</label>
+                    <select class="form-control" id="concentrationType">
+                        <option value="mol">몰농도 (mol/L)</option>
+                        <option value="percent">퍼센트 농도 (% w/w)</option>
+                    </select>
+                </div>
+
+                <!-- 목표 농도 -->
+                <div class="form-group">
+                    <label for="targetConcentration">목표 농도</label>
+                    <input type="number" class="form-control" id="targetConcentration" step="any">
+                </div>
+
+                <!-- 최종 부피 -->
+                <div class="form-group">
+                    <label for="volume">용액의 최종 부피</label>
+                    <input type="number" class="form-control" id="volume" step="any">
+                    <select class="form-control mt-1" id="volumeUnit">
+                        <option value="L">L</option>
+                        <option value="mL">mL</option>
+                    </select>
+                </div>
+
+                <!-- 용질 종류 -->
+                <div class="form-group">
+                    <label for="soluteType">용질의 종류</label>
+                    <select class="form-control" id="soluteType" onchange="updateSoluteFields()">
+                        <option value="solid">고체</option>
+                        <option value="liquid">액체</option>
+                    </select>
+                </div>
+
+                <!-- 계산 방식: 액체일 경우에만 표시 -->
+                <div class="form-group" id="liquidModeGroup" style="display: none;">
+                    <label>액체 계산 방식</label>
+                    <select class="form-control" id="liquidMode" onchange="updateSoluteFields()">
+                        <option value="mass">몰질량 기반</option>
+                        <option value="stock">희석(원액) 기반</option>
+                    </select>
+                </div>
+
+
+                <!-- 몰질량 -->
+                <div class="form-group" id="molarMassGroup">
+                    <label for="molarMass">용질의 몰질량 (g/mol)</label>
+                    <input type="number" class="form-control" id="molarMass" step="any">
+                </div>
+
+                <!-- 용질의 밀도 (액체) -->
+                <div class="form-group" id="soluteDensityGroup" style="display: none;">
+                    <label for="soluteDensity">용질의 밀도 (g/mL)</label>
+                    <input type="number" class="form-control" id="soluteDensity" step="any">
+                </div>
+
+                <!-- 원액 정보: 희석 방식일 경우만 -->
+                <div id="stockInfoGroup" style="display: none;">
+                    <div class="form-group">
+                        <label for="stockConcentrationType">원액 농도 단위</label>
+                        <select class="form-control" id="stockConcentrationType">
+                            <option value="mol">mol/L</option>
+                            <option value="percent">% w/w</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="stockConcentration">원액의 농도</label>
+                        <input type="number" class="form-control" id="stockConcentration" step="any">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="stockDensity">원액의 밀도 (g/mL)</label>
+                        <input type="number" class="form-control" id="stockDensity" step="any">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary mt-3">계산</button>
+            </form>
+
+            <h3 class="mt-4">필요한 용질의 양</h3>
+            <div id="result" class="alert alert-info" style="display:none;">
+                <p id="calculated-amount"></p>
+            </div>
+        </main>
+    </div>
+
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script>
+      function updateSoluteFields() {
+        const soluteType = document.getElementById('soluteType').value;
+        const liquidMode = document.getElementById('liquidMode').value;
+
+        document.getElementById('liquidModeGroup').style.display = soluteType === 'liquid' ? 'block' : 'none';
+        document.getElementById('soluteDensityGroup').style.display = (soluteType === 'liquid' && liquidMode === 'mass') ? 'block' : 'none';
+        document.getElementById('molarMassGroup').style.display = (soluteType === 'solid' || (soluteType === 'liquid' && liquidMode === 'mass')) ? 'block' : 'none';
+        document.getElementById('stockInfoGroup').style.display = (soluteType === 'liquid' && liquidMode === 'stock') ? 'block' : 'none';
+      }
+    </script>
+    <script src="{% static 'js/mol_calc.js' %}"></script>
+    <script src="/static/js/script.js"></script>
+</body>
+</html>
+

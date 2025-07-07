@@ -1,0 +1,153 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>프롤로그 화학</title>
+    <link href='{% static "css/bootstrap.min.css" %}' rel="stylesheet">
+    <link href='{% static "css/templatemo-xtra-blog.css" %}' rel="stylesheet">
+    <link href='{% static "css/style.css" %}' rel="stylesheet">
+</head>
+<body class="book-page">
+    {% include 'root/header.html' %}
+
+    <div class="container-fluid">
+        <main class="tm-main">
+            <section id="chemical-list">
+                <h2>약품 목록</h2>
+                <form method="get" action="{% url 'chemical_list' %}" class="form-inline mb-3">
+                    <input type="text" name="q" class="form-control mr-2" placeholder="약품명 또는 태그를 입력하세요" value="{{ query }}">
+                    <button type="submit" class="btn btn-primary">검색</button>
+                </form>
+                
+
+                <!-- 약품 목록 테이블 -->
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>약품명</th>
+                                <th>잔여용량(예약된 용량)</th>
+                                <th>마지막 사용</th>
+                                <th>예약</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for book in books %}
+                            <!-- 테이블 예약 버튼 -->
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td><a href="{% url 'chemical_detail' book.id %}">{{ book.name }}</a></td>
+                                <td>{{ book.remain }}({{ book.reserved }})</td>
+                                {% if book.recent_use %}
+                                    <td>{{ book.recent_use }}</td>
+                                {% else %}
+                                    <td>기록 없음</td>
+                                {% endif %}
+                                <td>
+                                    <button class="btn btn-warning btn-sm" data-id="{{ book.id }}" onclick="showReservationFormTable('{{ book.id }}')">예약</button>
+                                    <!-- 고유한 예약 폼 ID -->
+                                    <div id="reservation-form-table-{{ book.id }}" style="display: none;">
+                                        <form method="post" action="{% url 'reservation_view' %}">
+                                            {% csrf_token %}
+                                            <input type="hidden" id="chemical-id-table-{{ book.id }}" name="chemical_name" value="{{ book.id }}">
+                                            <div class="form-group">
+                                                <label for="reserver_name">학번 이름</label>
+                                                <input type="text" name="reserver_name" id="reserver_name-{{ book.id }}" class="form-control" placeholder="ex: 20120 홍길동" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="quantity">예약량</label>
+                                                <input type="number" name="quantity" class="form-control" placeholder="예약량" min="1" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="reservation_date">사용 예정일</label>
+                                                <input type="date" name="reservation_date" class="form-control" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="comments">비고</label>
+                                                <textarea name="comments" class="form-control" placeholder="비고"></textarea>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">제출</button>
+                                            <button type="button" class="btn btn-secondary" onclick="hideReservationFormTable('{{ book.id }}')">취소</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            {% endfor %}
+                            
+                        </tbody>
+                        
+                    </table>
+                </div>
+
+                <!-- 예약 폼 -->
+                
+
+                <script>
+                    function showReservationForm(chemicalId) {
+                        document.getElementById('reservation-form').style.display = 'block';
+                        document.getElementById('chemical-id').value = chemicalId;
+                    }
+
+                    function hideReservationForm() {
+                        document.getElementById('reservation-form').style.display = 'none';
+                    }
+                </script>
+
+
+                <!-- 카드 스타일 (모바일 전용) -->
+                <!-- 카드 뷰 -->
+                {% for book in books %}
+                <!-- 카드 예약 버튼 -->
+                <div class="card">
+                    <h3><a href="{% url 'chemical_detail' book.id %}">{{ book.name }}</a></h3>
+                    <p>잔여용량(예약된 용량) : {{ book.remain }}({{ book.reserved }})</p>
+                    {% if book.recent_use %}
+                        <p>최근 사용 : {{ book.recent_use }}</p>
+                    {% else %}
+                        <p>최근 사용 : 기록 없음</p>
+                    {% endif %}
+                    <button class="btn btn-warning btn-sm" data-id="{{ book.id }}" onclick="showReservationFormCard('{{ book.id }}')">예약</button>
+                    <!-- 고유한 예약 폼 ID -->
+                    <div id="reservation-form-card-{{ book.id }}" class="reservation-form" style="display: none;">
+                        <form method="post" action="{% url 'reservation_view' %}">
+                            {% csrf_token %}
+                            <input type="hidden" id="chemical-id-card-{{ book.id }}" name="chemical_name" value="{{ book.id }}">
+                            <div class="form-group">
+                                <label for="reserver_name">학번 이름</label>
+                                <input type="text" name="reserver_name" id="reserver_name-{{ book.id }}" class="form-control" placeholder="ex: 20120 홍길동" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="quantity">예약량</label>
+                                <input type="number" name="quantity" class="form-control" placeholder="예약량" min="1" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="reservation_date">사용 예정일</label>
+                                <input type="date" name="reservation_date" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="comments">비고</label>
+                                <textarea name="comments" class="form-control" placeholder="비고"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">제출</button>
+                            <button type="button" class="btn btn-secondary" onclick="hideReservationFormCard('{{ book.id }}')">취소</button>
+                        </form>
+                    </div>
+                </div>
+
+                {% endfor %}
+
+
+                
+            </section>
+        </main>
+    </div>
+
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>

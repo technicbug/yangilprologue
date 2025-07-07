@@ -1,0 +1,213 @@
+.tm-header {
+    background-color: #2c3e50;
+}
+.tm-site-header h1 {
+    font-size: 1.8rem;
+}
+.table {
+    margin-top: 20px;
+}
+.form-inline .form-control {
+    width: auto;
+    flex: 1;
+}
+@media (max-width: 576px) {
+    .form-inline {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .form-inline .form-control {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}
+
+.navbar-toggler {
+    display: none;
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 1100;
+    background-color: #2c3e50;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-size: 1.2rem;
+    border-radius: 5px;
+}
+
+.navbar-toggler i {
+    color: white;
+}
+
+@media (max-width: 991px) {
+    .navbar-toggler {
+        display: block;
+    }
+    .tm-header {
+        left: -320px;
+        transition: all 0.3s ease;
+    }
+    .tm-header.show {
+        left: 0;
+    }
+}
+
+.navbar-toggler img {
+    width: 24px;
+    height: 24px;
+}
+
+/* style.css */
+
+/* 디테일 페이지에서 테이블 강제 표시 */
+.detail-table {
+    display: table !important;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.detail-table th,
+.detail-table td {
+    padding: 8px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+.detail-table th {
+    background-color: #f4f4f4;
+}
+
+.detail-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+/* 반응형 테이블 - 디테일 페이지에서 강제 표시 */
+@media (max-width: 768px) {
+    .detail-table {
+        display: table !important;
+    }
+}
+
+/* 기존 테이블 숨김 (다른 페이지용) */
+@media (max-width: 768px) {
+    .table:not(.detail-table) {
+        display: none;
+    }
+
+    .card {
+        display: block;
+        margin-bottom: 15px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: #fff;
+    }
+
+    .card h3 {
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+    }
+
+    .card p {
+        margin: 5px 0;
+    }
+
+    .btn {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}
+
+/* 큰 화면에서는 카드 숨김 (공통) */
+@media (min-width: 769px) {
+    .card {
+        display: none;
+    }
+}
+
+/* chemical-detail 레이아웃 수정 */
+.chemical-detail {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.chemical-image-container {
+    width: 200px;
+    height: 200px;
+    margin-right: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f9f9f9;
+}
+
+.chemical-image-container img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+/* chemical-info: 디테일 페이지용 */
+.chemical-info {
+    flex: 1;
+}
+
+/* 모바일 화면 */
+@media (max-width: 768px) {
+    .chemical-detail {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: flex-start;
+    }
+
+    .chemical-image-container {
+        width: 150px;
+        height: 150px;
+        margin-right: 10px;
+        margin-bottom: 0;
+    }
+
+    .chemical-info {
+        flex: 1 1 calc(100% - 160px);
+        max-width: calc(100% - 160px);
+        text-align: left;
+    }
+}
+
+.navbar-collapse {
+    transition: all 0.3s ease;
+}
+
+.collapse {
+    display: none; /* 초기 상태 */
+}
+
+.collapse.show {
+    display: block; /* 열림 상태 */
+}
+
+/* 초기 상태에서 메뉴 숨기기 */
+.tm-nav {
+    display: none; /* 숨기기 */
+}
+
+/* 메뉴가 열릴 때 */
+.tm-nav.show {
+    display: block; /* 보이기 */
+}
+
+/* 모바일 전용 */
+@media (min-width: 768px) {
+    .tm-nav {
+        display: block; /* 데스크탑에서는 항상 보임 */
+    }
+    .navbar-toggler {
+        display: none; /* 데스크탑에서는 버튼 숨김 */
+    }
+}
