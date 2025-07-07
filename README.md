@@ -20,6 +20,8 @@ pip list 를 출력한 결과입니다. 해당 버전의 라이브러리를 설�
 |typing_extensions|4.7.1|
 |wheel|0.37.1|
 
+
+사이트 접속 : https://yangilprologue.pythonanywhere.com
            
 
 Admin 페이지에 접속하여 더욱 세부적인 부분까지 관리가 가능합니다.
